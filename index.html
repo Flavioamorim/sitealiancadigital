@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aliança Digital — Soluções em Desenvolvimento Web</title>
+    <meta name="description" content="Aliança Digital: desenvolvimento web full-stack com PHP, Laravel, Symfony, Ruby on Rails, Node.js, Vue.js, Redis, Docker e Salesforce. Da arquitetura ao deploy.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ===== Reset & Base ===== */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --vue-green:        #42b883;
+            --vue-green-dark:   #33a06f;
+            --vue-green-light:  #5dcb8e;
+            --vue-green-bg:     rgba(66, 184, 131, 0.12);
+            --vue-green-bg-hover: rgba(66, 184, 131, 0.18);
+            --vue-dark:         #2c3e50;
+            --vue-dark-light:   #35495e;
+            --vue-gradient:     linear-gradient(135deg, #42b883 0%, #35495e 100%);
+            --bg-primary:       #1a1a2e;
+            --bg-secondary:     #1e1e32;
+            --bg-card:          #242438;
+            --bg-card-hover:    #2a2a42;
+            --bg-elevated:      #2d2d44;
+            --text-primary:     #f0f0f0;
+            --text-secondary:   #a0a0b0;
+            --text-muted:       #6e6e80;
+            --border-color:     rgba(255, 255, 255, 0.08);
+            --border-hover:     rgba(66, 184, 131, 0.35);
+            --white:            #ffffff;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.3);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.5), 0 8px 10px -6px rgb(0 0 0 / 0.3);
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            color: var(--text-primary);
+            background: var(--bg-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, h4 { line-height: 1.2; }
+        a { text-decoration: none; color: inherit; }
+        img { max-width: 100%; display: block; }
+
+        .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+        /* ===== Buttons ===== */
+        .btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 14px 32px; font-size: 1rem; font-weight: 600;
+            border-radius: var(--radius-md); border: 2px solid transparent;
+            cursor: pointer; transition: all 0.25s ease;
+            white-space: nowrap; font-family: inherit;
+        }
+        .btn-primary {
+            background: var(--vue-green); color: var(--bg-primary); border-color: var(--vue-green);
+        }
+        .btn-primary:hover {
+            background: var(--vue-green-dark); border-color: var(--vue-green-dark);
+            transform: translateY(-1px); box-shadow: 0 8px 25px rgba(66, 184, 131, 0.35);
+        }
+        .btn-outline {
+            background: transparent; color: var(--vue-green); border-color: var(--vue-green);
+        }
+        .btn-outline:hover {
+            background: var(--vue-green); color: var(--bg-primary); transform: translateY(-1px);
+            box-shadow: 0 8px 25px rgba(66, 184, 131, 0.25);
+        }
+        .btn-light {
+            background: var(--white); color: var(--vue-dark); border-color: var(--white);
+        }
+        .btn-light:hover {
+            background: #e8e8e8; border-color: #e8e8e8; transform: translateY(-1px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        .btn-lg { padding: 18px 40px; font-size: 1.1rem; border-radius: var(--radius-lg); }
+
+        /* ===== Navbar ===== */
+        .navbar {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+            background: rgba(26, 26, 46, 0.92); backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            transition: box-shadow 0.3s;
+        }
+        .navbar.scrolled { box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4); }
+        .navbar .container { display: flex; align-items: center; justify-content: space-between; height: 72px; }
+        .nav-brand {
+            display: flex; align-items: center; gap: 10px;
+            font-size: 1.4rem; font-weight: 800; color: var(--white);
+        }
+        .nav-brand .logo-icon {
+            width: 42px; height: 42px;
+            background: var(--vue-gradient);
+            border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center;
+            color: var(--white); font-size: 1.2rem; font-weight: 800;
+        }
+        .nav-links { display: flex; align-items: center; gap: 32px; list-style: none; }
+        .nav-links a { font-size: 0.95rem; font-weight: 500; color: var(--text-secondary); transition: color 0.2s; }
+        .nav-links a:hover { color: var(--vue-green); }
+        .nav-cta .btn { padding: 10px 24px; font-size: 0.9rem; }
+
+        /* Mobile menu */
+        .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 4px; }
+        .hamburger span { display: block; width: 26px; height: 2.5px; background: var(--text-secondary); border-radius: 3px; transition: all 0.3s; }
+
+        /* ===== Hero ===== */
+        .hero {
+            padding: 160px 0 100px;
+            background: var(--bg-primary);
+            position: relative; overflow: hidden;
+        }
+        .hero::before {
+            content: ''; position: absolute; top: -200px; right: -200px;
+            width: 700px; height: 700px;
+            background: radial-gradient(circle, rgba(66, 184, 131, 0.07) 0%, transparent 70%);
+            border-radius: 50%; pointer-events: none;
+        }
+        .hero::after {
+            content: ''; position: absolute; bottom: -100px; left: -100px;
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(53, 73, 94, 0.15) 0%, transparent 70%);
+            border-radius: 50%; pointer-events: none;
+        }
+        .hero .container { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+        .hero-badge {
+            display: inline-block; padding: 6px 16px;
+            background: var(--vue-green-bg); color: var(--vue-green);
+            border-radius: 50px; font-size: 0.85rem; font-weight: 600; margin-bottom: 24px;
+            border: 1px solid rgba(66, 184, 131, 0.2);
+        }
+        .hero h1 {
+            font-size: clamp(2.4rem, 4.5vw, 3.6rem); font-weight: 800;
+            color: var(--white); margin-bottom: 20px;
+        }
+        .hero h1 span { background: linear-gradient(135deg, #42b883 0%, #5dcb8e 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .hero-desc {
+            font-size: 1.15rem; color: var(--text-secondary); margin-bottom: 36px;
+            max-width: 520px; line-height: 1.7;
+        }
+        .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
+
+        .hero-visual {
+            display: flex; align-items: center; justify-content: center;
+            position: relative;
+        }
+        .hero-card {
+            background: var(--bg-card); border-radius: var(--radius-xl);
+            padding: 32px 28px; box-shadow: var(--shadow-xl);
+            border: 1px solid var(--border-color);
+            width: 100%; max-width: 440px;
+        }
+        .hero-card h4 { font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 20px; }
+        .stack-list { display: flex; flex-wrap: wrap; gap: 10px; }
+        .stack-tag {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 8px 14px; background: var(--bg-elevated); border-radius: var(--radius-md);
+            font-size: 0.85rem; font-weight: 600; color: var(--text-secondary);
+            border: 1px solid var(--border-color); transition: all 0.2s;
+        }
+        .stack-tag:hover { border-color: var(--vue-green); background: var(--vue-green-bg); color: var(--vue-green); }
+        .stack-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: var(--vue-green);
+        }
+
+        .tech-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 16px; }
+        .tech-item {
+            display: flex; align-items: center; gap: 10px; padding: 10px 14px;
+            background: var(--bg-elevated); border-radius: var(--radius-sm);
+            font-size: 0.88rem; font-weight: 500; color: var(--text-secondary);
+        }
+        .tech-icon { width: 28px; height: 28px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; }
+
+        /* ===== Section Common ===== */
+        .section { padding: 100px 0; }
+        .section-header { text-align: center; margin-bottom: 64px; }
+        .section-label {
+            display: inline-block; padding: 6px 16px;
+            background: var(--vue-green-bg); color: var(--vue-green);
+            border-radius: 50px; font-size: 0.85rem; font-weight: 600; margin-bottom: 16px;
+            border: 1px solid rgba(66, 184, 131, 0.2);
+        }
+        .section-header h2 { font-size: clamp(2rem, 3.5vw, 2.6rem); font-weight: 800; color: var(--white); margin-bottom: 12px; }
+        .section-header p { font-size: 1.1rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto; }
+
+        /* ===== Services ===== */
+        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 28px; }
+        .service-card {
+            background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg);
+            padding: 36px 28px; transition: all 0.3s ease; position: relative; overflow: hidden;
+        }
+        .service-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, #42b883, #35495e);
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .service-card:hover { border-color: var(--border-hover); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4); transform: translateY(-4px); background: var(--bg-card-hover); }
+        .service-card:hover::before { opacity: 1; }
+        .service-icon {
+            width: 52px; height: 52px; border-radius: var(--radius-md);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.6rem; margin-bottom: 20px;
+            background: var(--vue-green-bg);
+        }
+        .service-card h3 { font-size: 1.2rem; font-weight: 700; color: var(--white); margin-bottom: 10px; }
+        .service-card p { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.65; margin-bottom: 16px; }
+        .service-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+        .service-tags span {
+            padding: 4px 10px; background: var(--vue-green-bg); color: var(--vue-green);
+            border-radius: 20px; font-size: 0.78rem; font-weight: 600;
+            border: 1px solid rgba(66, 184, 131, 0.15);
+        }
+
+        /* ===== Tech stack full ===== */
+        .tech-section { background: var(--bg-secondary); }
+        .tech-categories { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
+        .tech-cat {
+            background: var(--bg-card); border-radius: var(--radius-lg); padding: 28px 24px;
+            border: 1px solid var(--border-color); transition: all 0.3s;
+        }
+        .tech-cat:hover { border-color: var(--border-hover); box-shadow: var(--shadow-md); }
+        .tech-cat h4 { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px; }
+        .tech-cat-items { display: flex; flex-wrap: wrap; gap: 8px; }
+        .tech-cat .stack-tag { background: var(--bg-elevated); }
+        .tech-cat .stack-tag:hover { border-color: var(--vue-green); background: var(--vue-green-bg); color: var(--vue-green); }
+
+        /* ===== Why Us ===== */
+        .why-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 28px; }
+        .why-card { text-align: center; padding: 32px 20px; }
+        .why-icon {
+            width: 64px; height: 64px; border-radius: 50%; margin: 0 auto 20px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.8rem; background: var(--vue-green-bg);
+        }
+        .why-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; color: var(--white); }
+        .why-card p { font-size: 0.92rem; color: var(--text-secondary); }
+
+        /* ===== CTA ===== */
+        .cta {
+            background: var(--vue-gradient);
+            color: var(--white); text-align: center; position: relative; overflow: hidden;
+        }
+        .cta::before {
+            content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 600px; height: 600px; background: radial-gradient(circle, rgb(255 255 255 / 0.06) 0%, transparent 70%);
+            border-radius: 50%; pointer-events: none;
+        }
+        .cta .container { position: relative; z-index: 1; }
+        .cta h2 { font-size: clamp(1.8rem, 3.5vw, 2.4rem); font-weight: 800; margin-bottom: 16px; }
+        .cta p { font-size: 1.1rem; opacity: 0.9; max-width: 600px; margin: 0 auto 36px; }
+        .cta .btn-light { font-size: 1.05rem; padding: 16px 40px; }
+
+        /* ===== Footer ===== */
+        .footer {
+            background: #141428; color: var(--text-secondary); padding: 48px 0 32px;
+        }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; margin-bottom: 40px; }
+        .footer-brand {
+            font-size: 1.3rem; font-weight: 800; color: var(--white); margin-bottom: 12px;
+            background: linear-gradient(135deg, #42b883, #5dcb8e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .footer-about { font-size: 0.9rem; line-height: 1.7; max-width: 340px; }
+        .footer h5 { color: var(--white); font-size: 0.9rem; font-weight: 700; margin-bottom: 16px; }
+        .footer-links { list-style: none; }
+        .footer-links li { margin-bottom: 10px; }
+        .footer-links a { font-size: 0.9rem; color: var(--text-secondary); transition: color 0.2s; }
+        .footer-links a:hover { color: var(--vue-green); }
+        .footer-bottom { border-top: 1px solid rgba(255, 255, 255, 0.06); padding-top: 24px; text-align: center; font-size: 0.85rem; color: var(--text-muted); }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 900px) {
+            .hero .container { grid-template-columns: 1fr; text-align: center; }
+            .hero-desc { max-width: 100%; }
+            .hero-actions { justify-content: center; }
+            .hero-visual { order: -1; }
+            .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hamburger { display: flex; }
+            .nav-links.active {
+                display: flex; flex-direction: column; position: absolute;
+                top: 72px; left: 0; right: 0; background: var(--bg-card);
+                padding: 20px 24px; border-bottom: 1px solid var(--border-color);
+                box-shadow: var(--shadow-lg); gap: 16px;
+            }
+            .hero { padding: 120px 0 60px; }
+            .section { padding: 64px 0; }
+            .hero-card { max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== Navbar ===== -->
+<nav class="navbar" id="navbar">
+    <div class="container">
+        <a href="#" class="nav-brand">
+            <div class="logo-icon">AD</div>
+            Aliança Digital
+        </a>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#servicos">Serviços</a></li>
+            <li><a href="#tecnologias">Tecnologias</a></li>
+            <li><a href="#diferenciais">Diferenciais</a></li>
+            <li><a href="https://wa.me/5531992936794" target="_blank" rel="noopener" class="btn btn-primary">💬 Fale Conosco</a></li>
+        </ul>
+        <button class="hamburger" id="hamburger" aria-label="Menu">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</nav>
+
+<!-- ===== Hero ===== -->
+<header class="hero">
+    <div class="container">
+        <div class="hero-content">
+            <span class="hero-badge">🚀 Desenvolvimento Web Full-Stack</span>
+            <h1>Transformamos ideias em <span>soluções digitais</span> robustas</h1>
+            <p class="hero-desc">
+                Da arquitetura ao deploy, entregamos aplicações web modernas, escaláveis e de alta performance
+                utilizando as melhores tecnologias do mercado.
+            </p>
+            <div class="hero-actions">
+                <a href="https://wa.me/5531992936794" target="_blank" rel="noopener" class="btn btn-primary btn-lg">💬 Solicitar Orçamento</a>
+                <a href="#servicos" class="btn btn-outline btn-lg">Ver Serviços</a>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="hero-card">
+                <h4>Tecnologias que dominamos</h4>
+                <div class="stack-list">
+                    <span class="stack-tag"><span class="stack-dot"></span> PHP</span>
+                    <span class="stack-tag"><span class="stack-dot"></span> Laravel</span>
+                    <span class="stack-tag"><span class="stack-dot"></span> Symfony</span>
+                    <span class="stack-tag"><span class="stack-dot"></span> Ruby on Rails</span>
+                    <span class="stack-tag"><span class="stack-dot"></span> Node.js</span>
+                    <span class="stack-tag"><span class="stack-dot"></span> Vue.js</span>
+                    <span class="stack-tag"><span class="stack-dot"></span> Redis</span>
+                    <span class="stack-tag"><span class="stack-dot"></span> Docker</span>
+                    <span class="stack-tag"><span class="stack-dot"></span> Salesforce</span>
+                </div>
+                <div class="tech-grid">
+                    <div class="tech-item">
+                        <div class="tech-icon" style="background:rgba(66,184,131,0.18);color:#42b883;">🐘</div> Backend robusto
+                    </div>
+                    <div class="tech-item">
+                        <div class="tech-icon" style="background:rgba(66,184,131,0.18);color:#42b883;">⚡</div> Alta performance
+                    </div>
+                    <div class="tech-item">
+                        <div class="tech-icon" style="background:rgba(66,184,131,0.18);color:#42b883;">📦</div> Containers Docker
+                    </div>
+                    <div class="tech-item">
+                        <div class="tech-icon" style="background:rgba(66,184,131,0.18);color:#42b883;">🔄</div> APIs RESTful
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- ===== Serviços ===== -->
+<section class="section" id="servicos">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-label">O que fazemos</span>
+            <h2>Soluções completas para o seu negócio</h2>
+            <p>Da ideação à entrega, cobrimos todo o ciclo de desenvolvimento de software.</p>
+        </div>
+
+        <div class="services-grid">
+            <!-- Serviço 1 -->
+            <div class="service-card">
+                <div class="service-icon">🏗️</div>
+                <h3>Desenvolvimento Backend</h3>
+                <p>Criação de APIs robustas, sistemas corporativos e microsserviços com PHP, Laravel, Symfony, Ruby on Rails e Node.js. Arquitetura limpa, testada e escalável.</p>
+                <div class="service-tags">
+                    <span>PHP</span><span>Laravel</span><span>Symfony</span><span>Rails</span><span>Node.js</span>
+                </div>
+            </div>
+
+            <!-- Serviço 2 -->
+            <div class="service-card">
+                <div class="service-icon">🎨</div>
+                <h3>Desenvolvimento Frontend</h3>
+                <p>Interfaces modernas, reativas e responsivas utilizando Vue.js. Single Page Applications (SPA) com experiência de usuário fluida e design profissional.</p>
+                <div class="service-tags">
+                    <span>Vue.js</span><span>JavaScript</span><span>HTML5</span><span>CSS3</span>
+                </div>
+            </div>
+
+            <!-- Serviço 3 -->
+            <div class="service-card">
+                <div class="service-icon">🔗</div>
+                <h3>Integração de Sistemas</h3>
+                <p>Conexão entre plataformas, APIs de terceiros e sistemas legados. Integração com Salesforce (Apex) para automatizar processos de vendas e CRM.</p>
+                <div class="service-tags">
+                    <span>Salesforce</span><span>Apex</span><span>REST</span><span>SOAP</span><span>APIs</span>
+                </div>
+            </div>
+
+            <!-- Serviço 4 -->
+            <div class="service-card">
+                <div class="service-icon">🐳</div>
+                <h3>Infraestrutura & DevOps</h3>
+                <p>Containerização com Docker, caching com Redis, configuração de ambientes, CI/CD e deploy. Sua aplicação rodando com performance e segurança.</p>
+                <div class="service-tags">
+                    <span>Docker</span><span>Redis</span><span>CI/CD</span><span>Linux</span>
+                </div>
+            </div>
+
+            <!-- Serviço 5 -->
+            <div class="service-card">
+                <div class="service-icon">🛠️</div>
+                <h3>Manutenção & Suporte</h3>
+                <p>Sustentação de sistemas legados, correção de bugs, melhorias de performance e evolução contínua de aplicações existentes em PHP, Rails ou Node.js.</p>
+                <div class="service-tags">
+                    <span>PHP</span><span>Rails</span><span>Node.js</span><span>Laravel</span>
+                </div>
+            </div>
+
+            <!-- Serviço 6 -->
+            <div class="service-card">
+                <div class="service-icon">📊</div>
+                <h3>Consultoria Técnica</h3>
+                <p>Análise de arquitetura, escolha de stack tecnológica, code review e mentoria para equipes. Orientação estratégica para decisões técnicas do seu projeto.</p>
+                <div class="service-tags">
+                    <span>Arquitetura</span><span>Code Review</span><span>Mentoria</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== Tecnologias ===== -->
+<section class="section tech-section" id="tecnologias">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-label">Stack Tecnológico</span>
+            <h2>Ferramentas que utilizamos</h2>
+            <p>Tecnologias modernas e consolidadas para entregar o melhor resultado.</p>
+        </div>
+
+        <div class="tech-categories">
+            <div class="tech-cat">
+                <h4>🔧 Backend / Frameworks</h4>
+                <div class="tech-cat-items">
+                    <span class="stack-tag">PHP</span>
+                    <span class="stack-tag">Laravel</span>
+                    <span class="stack-tag">Symfony</span>
+                    <span class="stack-tag">Ruby on Rails</span>
+                    <span class="stack-tag">Node.js</span>
+                </div>
+            </div>
+            <div class="tech-cat">
+                <h4>🖥️ Frontend</h4>
+                <div class="tech-cat-items">
+                    <span class="stack-tag">Vue.js</span>
+                    <span class="stack-tag">JavaScript</span>
+                    <span class="stack-tag">HTML5</span>
+                    <span class="stack-tag">CSS3</span>
+                </div>
+            </div>
+            <div class="tech-cat">
+                <h4>☁️ CRM & Cloud</h4>
+                <div class="tech-cat-items">
+                    <span class="stack-tag">Salesforce</span>
+                    <span class="stack-tag">Apex</span>
+                    <span class="stack-tag">APIs REST</span>
+                </div>
+            </div>
+            <div class="tech-cat">
+                <h4>⚙️ Infra & DevOps</h4>
+                <div class="tech-cat-items">
+                    <span class="stack-tag">Docker</span>
+                    <span class="stack-tag">Redis</span>
+                    <span class="stack-tag">Linux</span>
+                    <span class="stack-tag">CI/CD</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== Diferenciais ===== -->
+<section class="section" id="diferenciais">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-label">Por que nós?</span>
+            <h2>Diferenciais da Aliança Digital</h2>
+            <p>Compromisso com qualidade, prazos e resultados concretos.</p>
+        </div>
+
+        <div class="why-grid">
+            <div class="why-card">
+                <div class="why-icon">🎯</div>
+                <h3>Stack diversificada</h3>
+                <p>Dominamos múltiplas tecnologias — PHP, Rails, Node.js, Vue.js e Salesforce — escolhendo a melhor ferramenta para cada desafio.</p>
+            </div>
+            <div class="why-card">
+                <div class="why-icon">⚡</div>
+                <h3>Entrega ágil</h3>
+                <p>Metodologia ágil com entregas incrementais, feedback constante e transparência total sobre o andamento do projeto.</p>
+            </div>
+            <div class="why-card">
+                <div class="why-icon">🔒</div>
+                <h3>Código de qualidade</h3>
+                <p>Testes automatizados, code review, padrões de projeto e clean code como pilares do nosso processo de desenvolvimento.</p>
+            </div>
+            <div class="why-card">
+                <div class="why-icon">📈</div>
+                <h3>Escalabilidade</h3>
+                <p>Soluções preparadas para crescer com o seu negócio. Cache com Redis, containers Docker e arquitetura pensada para o futuro.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== CTA ===== -->
+<section class="section cta" id="contato">
+    <div class="container">
+        <h2>Vamos construir algo juntos?</h2>
+        <p>Entre em contato para conversarmos sobre seu projeto. Sem compromisso — uma conversa inicial para entender como podemos ajudar.</p>
+        <a href="https://wa.me/5531992936794" target="_blank" rel="noopener" class="btn btn-light btn-lg">💬 Chamar no WhatsApp</a>
+    </div>
+</section>
+
+<!-- ===== Footer ===== -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-grid">
+            <div>
+                <div class="footer-brand">Aliança Digital</div>
+                <p class="footer-about">
+                    Desenvolvimento web full-stack com excelência. Transformamos requisitos em software funcional, escalável e bem arquitetado.
+                </p>
+            </div>
+            <div>
+                <h5>Serviços</h5>
+                <ul class="footer-links">
+                    <li><a href="#servicos">Desenvolvimento Backend</a></li>
+                    <li><a href="#servicos">Frontend Vue.js</a></li>
+                    <li><a href="#servicos">Integração Salesforce</a></li>
+                    <li><a href="#servicos">DevOps & Infra</a></li>
+                </ul>
+            </div>
+            <div>
+                <h5>Contato</h5>
+                <ul class="footer-links">
+                    <li><a href="https://wa.me/5531992936794" target="_blank" rel="noopener">💬 WhatsApp: (31) 99293-6794</a></li>
+                    <li><a href="mailto:contato@aliancadigital.com.br">contato@aliancadigital.com.br</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2026 Aliança Digital. Todos os direitos reservados.
+        </div>
+    </div>
+</footer>
+
+<!-- ===== JS ===== -->
+<script>
+    // Navbar scroll effect
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+        navbar.classList.toggle('scrolled', window.scrollY > 10);
+    });
+
+    // Mobile menu toggle
+    const hamburger = document.getElementById('hamburger');
+    const navLinks = document.getElementById('navLinks');
+    hamburger.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
+    });
+
+    // Close menu on link click
+    navLinks.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            navLinks.classList.remove('active');
+        });
+    });
+
+    // Smooth scroll for all anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
